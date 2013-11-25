@@ -5,30 +5,39 @@ Bootstrap重采样技术在环境污染调查中的应用
 
 数据分析
 
-```{r rawdata, cache=TRUE}
-rawdata <- read.csv('2008_BOLD_Survey_of_Puget_Sound_Levels_for_PCB_Congeners_Raw_Data.csv')
-# 查看列名
-# colnames(rawdata)
-# 观察总浓度与深度关系
-plot(rawdata$Depth..feet.,rawdata$Total.PCBs..0.DL..pg.g)
+
+```r
+rawdata <- read.csv("2008_BOLD_Survey_of_Puget_Sound_Levels_for_PCB_Congeners_Raw_Data.csv")
+# 查看列名 colnames(rawdata) 观察总浓度与深度关系
+plot(rawdata$Depth..feet., rawdata$Total.PCBs..0.DL..pg.g)
+```
+
+![plot of chunk rawdata](figure/rawdata1.png) 
+
+```r
 # bootstrap重采样
 Total.PCBs <- rawdata$Total.PCBs..0.DL..pg.g
 Depth <- rawdata$Depth..feet.
-data <- cbind(Total.PCBs,Depth)
+data <- cbind(Total.PCBs, Depth)
 data <- data.frame(data)
 plot(data)
+```
+
+![plot of chunk rawdata](figure/rawdata2.png) 
+
+```r
 b <- c(0)
 c <- c(0)
 
 # 总体取样30进行区间估计
-a <- sample(75,30)
-subdatatest <- data[a,]
+a <- sample(75, 30)
+subdatatest <- data[a, ]
 
-for(i in 1:1000){
-a <- sample(30,replace=T)
-sub <- subdatatest[a,]
-b[i] <- mean(sub$Total.PCBs)
-c[i] <- median(sub$Total.PCBs)
+for (i in 1:1000) {
+    a <- sample(30, replace = T)
+    sub <- subdatatest[a, ]
+    b[i] <- mean(sub$Total.PCBs)
+    c[i] <- median(sub$Total.PCBs)
 }
 
 cib <- quantile(b, probs = c(0.025, 0.975))
@@ -37,32 +46,51 @@ cip <- quantile(data$Total.PCBs, probs = c(0.025, 0.975))
 cis <- quantile(subdatatest$Total.PCBs, probs = c(0.025, 0.975))
 
 # 绘制区间估计图
-hist(data$Total.PCBs,breaks=20)
-abline(v = cip, col = "red", lwd=2)
-abline(v = cic, col = "green",lwd=2)
-abline(v = cis, col = "blue",lwd=2)
+hist(data$Total.PCBs, breaks = 20)
+abline(v = cip, col = "red", lwd = 2)
+abline(v = cic, col = "green", lwd = 2)
+abline(v = cis, col = "blue", lwd = 2)
 abline(v = mean(data$Total.PCBs), col = "black")
-abline(v = median(data$Total.PCBs), col = "yellow",,lwd=3)
+abline(v = median(data$Total.PCBs), col = "yellow", , lwd = 3)
+```
+
+![plot of chunk rawdata](figure/rawdata3.png) 
+
+```r
 
 # 与深度关系
 
-fit <- lm(data$Total.PCBs~data$Depth)
-plot(data$Total.PCBs~data$Depth)
-lines(data$Depth,fit$fitted)
+fit <- lm(data$Total.PCBs ~ data$Depth)
+plot(data$Total.PCBs ~ data$Depth)
+lines(data$Depth, fit$fitted)
+```
+
+![plot of chunk rawdata](figure/rawdata4.png) 
+
+```r
 
 # p值0.001525 r^2 0.1294
 
-fit2 <- loess(data$Total.PCBs~data$Depth)
-plot(data$Total.PCBs~data$Depth)
-lines(lowess(data$Depth,fit2$fitted))
+fit2 <- loess(data$Total.PCBs ~ data$Depth)
+plot(data$Total.PCBs ~ data$Depth)
+lines(lowess(data$Depth, fit2$fitted))
+```
+
+![plot of chunk rawdata](figure/rawdata5.png) 
+
+```r
 
 # 局部加权回归散点平滑法
 
-plot(data$Total.PCBs~data$Depth, pch = 20, col = rgb(0, 0, 0, 0.5))
-for (i in 1:300){
-    idx = sample(75, replace=TRUE)
-    lines(lowess(data$Depth[idx], data$Total.PCBs[idx]), col = rgb(0,0, 0, 0.05), lwd = 1.5) 
+plot(data$Total.PCBs ~ data$Depth, pch = 20, col = rgb(0, 0, 0, 0.5))
+for (i in 1:300) {
+    idx = sample(75, replace = TRUE)
+    lines(lowess(data$Depth[idx], data$Total.PCBs[idx]), col = rgb(0, 0, 0, 
+        0.05), lwd = 1.5)
 }
-lines(data$Depth,fit$fitted)
+lines(data$Depth, fit$fitted)
 ```
+
+![plot of chunk rawdata](figure/rawdata6.png) 
+
 
