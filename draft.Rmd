@@ -37,7 +37,8 @@ cip <- quantile(data$Total.PCBs, probs = c(0.025, 0.975))
 cis <- quantile(subdatatest$Total.PCBs, probs = c(0.025, 0.975))
 
 # 绘制区间估计图
-hist(data$Total.PCBs,breaks=20)
+hist(sub$Total.PCBs,breaks = 20)
+hist(data$Total.PCBs,breaks = 20)
 abline(v = cip, col = "red", lwd=2)
 abline(v = cic, col = "green",lwd=2)
 abline(v = cis, col = "blue",lwd=2)
@@ -66,3 +67,174 @@ for (i in 1:300){
 lines(data$Depth,fit$fitted)
 ```
 
+================================================
+
+Bootstrap重采样技术在环境污染调查中的应用
+========================================================
+author: 于淼
+date: 2013年12月13日
+
+目录
+========================================================
+
+> 环境调查的可靠性
+    
+    - 样本数
+    - 异常值
+    - 模型假设
+
+> bootstrap 重采样技术
+    
+    - 原理
+    - 应用
+
+> 示例
+    
+    - 普吉特海湾多氯联苯（PCBs）调查数据分析
+
+环境调查的可靠性
+========================================================
+type: section
+
+## 安斯库姆四重奏
+![安斯库姆四重奏](figure/Anscombe's_quartet_3.svg)
+
+环境调查的可靠性
+========================================================
+- 样本数
+    - 功效分析 
+    
+- 异常值
+    - 剔除还是保留
+    - 样本有限
+
+- 模型假设
+    - 残差正态
+    - 模型的诊断与有效性
+
+Bootstrap
+========================================================
+type: section
+
+- 小样本分布更多依赖概率密度分布而非预设分布
+
+- 把样本看作总体进行有放回的重采样
+
+- 重复n次进行估计
+
+- plug-in 原则 —— 样本对总体的估计逼近
+
+- Monte Carlo 模拟 —— 大数定律
+
+示例：普吉特海湾PCBs开放数据
+========================================================
+
+- EPA公布于Socrata.com
+
+- 75个底泥样品采样点数据与污染物浓度数据
+
+- 只关注PCBs总浓度与采样深度两个变量
+
+***
+
+![sample](figure/socrata.png)
+
+PCBs总浓度描述
+========================================================
+
+- 假定75为总体，从中随机抽取30个为样本，进行浓度描述
+
+- 中位数 or 均值
+
+- 点估计 or 区间估计
+
+- Bootstrap对中位数进行区间估计
+
+PCBs总浓度描述
+========================================================
+
+```{r raw, cache=TRUE,echo=FALSE}
+rawdata <- read.csv('2008_BOLD_Survey_of_Puget_Sound_Levels_for_PCB_Congeners_Raw_Data.csv')
+Total.PCBs <- rawdata$Total.PCBs..0.DL..pg.g
+Depth <- rawdata$Depth..feet.
+data <- cbind(Total.PCBs,Depth)
+data <- data.frame(data)
+b <- c(0)
+c <- c(0)
+d <- c(0)
+e <- c(0)
+
+# 总体取样30进行区间估计
+a <- sample(75,30)
+subdatatest <- data[a,]
+for(i in 1:1000){
+a <- sample(30,replace=T)
+sub <- subdatatest[a,]
+b[i] <- mean(sub$Total.PCBs)
+c[i] <- median(sub$Total.PCBs)
+}
+
+# 总体取样分布
+
+for(i in 1:1000){
+a <- sample(75,replace=T)
+sub <- data[a,]
+d[i] <- mean(sub$Total.PCBs)
+e[i] <- median(sub$Total.PCBs)
+}
+
+cib <- quantile(b, probs = c(0.025, 0.975))
+cic <- quantile(c, probs = c(0.025, 0.975))
+cid <- quantile(d, probs = c(0.025, 0.975))
+cie <- quantile(e, probs = c(0.025, 0.975))
+
+cip <- quantile(data$Total.PCBs, probs = c(0.025, 0.975))
+cis <- quantile(subdatatest$Total.PCBs, probs = c(0.025, 0.975))
+
+t <- t.test(subdatatest$Total.PCBs)
+s <- t.test(data$Total.PCBs)
+
+# 绘制区间估计图
+
+plot(density(data$Total.PCBs), xlab = 'PCBs总浓度(pg/g)', ylab = '概率密度', main = 'PCBs浓度描述')
+abline(v = cip, col = "red", lwd=2)
+abline(v = cid, col = "green",lwd=2)
+abline(v = cib, col = "blue",lwd=2)
+abline(v = t$conf.int, col = "black",lwd=2)
+abline(v = s$conf.int, col = "yellow",lwd=2)
+
+abline(v = cie, col = "red", lwd=2)
+abline(v = mean(data$Total.PCBs), col = "black")
+abline(v = median(data$Total.PCBs), col = "yellow",lwd=3)
+
+```
+
+
+bootstrap
+========================================================
+type: alart
+
+> *模型是现实的简化，不是产生现象的原因*
+
+> *主要规律不受异常值影响*
+
+> *非参区间估计*
+
+重采样演示
+========================================================
+
+```{r setup,echo=FALSE}
+library(knitr)
+opts_knit$set(animation.fun = hook_scianimator)
+```
+<link rel="stylesheet" href="http://vis.supstat.com//assets/themes/dinky/css/scianimator.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script src="http://vis.supstat.com/assets/themes/dinky/js/jquery.scianimator.min.js"></script>
+```{r test, fig.show='animate',interval=.1,echo=FALSE}
+library('animation')
+par(mar = c(1.5, 3, 2.5, 0.1), cex.main = 1)
+boot.iid(heights = c(1, 2))
+```
+
+将样本看成总体 有放回的反复抽样
+========================================================

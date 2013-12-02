@@ -46,6 +46,12 @@ cip <- quantile(data$Total.PCBs, probs = c(0.025, 0.975))
 cis <- quantile(subdatatest$Total.PCBs, probs = c(0.025, 0.975))
 
 # 绘制区间估计图
+hist(sub$Total.PCBs, breaks = 20)
+```
+
+![plot of chunk rawdata](figure/rawdata3.png) 
+
+```r
 hist(data$Total.PCBs, breaks = 20)
 abline(v = cip, col = "red", lwd = 2)
 abline(v = cic, col = "green", lwd = 2)
@@ -54,7 +60,7 @@ abline(v = mean(data$Total.PCBs), col = "black")
 abline(v = median(data$Total.PCBs), col = "yellow", , lwd = 3)
 ```
 
-![plot of chunk rawdata](figure/rawdata3.png) 
+![plot of chunk rawdata](figure/rawdata4.png) 
 
 ```r
 
@@ -65,7 +71,7 @@ plot(data$Total.PCBs ~ data$Depth)
 lines(data$Depth, fit$fitted)
 ```
 
-![plot of chunk rawdata](figure/rawdata4.png) 
+![plot of chunk rawdata](figure/rawdata5.png) 
 
 ```r
 
@@ -76,7 +82,7 @@ plot(data$Total.PCBs ~ data$Depth)
 lines(lowess(data$Depth, fit2$fitted))
 ```
 
-![plot of chunk rawdata](figure/rawdata5.png) 
+![plot of chunk rawdata](figure/rawdata6.png) 
 
 ```r
 
@@ -91,6 +97,176 @@ for (i in 1:300) {
 lines(data$Depth, fit$fitted)
 ```
 
-![plot of chunk rawdata](figure/rawdata6.png) 
+![plot of chunk rawdata](figure/rawdata7.png) 
 
 
+================================================
+
+Bootstrap重采样技术在环境污染调查中的应用
+========================================================
+author: 于淼
+date: 2013年12月13日
+
+目录
+========================================================
+
+> 环境调查的可靠性
+    
+    - 样本数
+    - 异常值
+    - 模型假设
+
+> bootstrap 重采样技术
+    
+    - 原理
+    - 应用
+
+> 示例
+    
+    - 普吉特海湾多氯联苯（PCBs）调查数据分析
+
+环境调查的可靠性
+========================================================
+type: section
+
+## 安斯库姆四重奏
+![安斯库姆四重奏](figure/Anscombe's_quartet_3.svg)
+
+环境调查的可靠性
+========================================================
+- 样本数
+    - 功效分析 
+    
+- 异常值
+    - 剔除还是保留
+    - 样本有限
+
+- 模型假设
+    - 残差正态
+    - 模型的诊断与有效性
+
+Bootstrap
+========================================================
+type: section
+
+- 小样本分布更多依赖概率密度分布而非预设分布
+
+- 把样本看作总体进行有放回的重采样
+
+- 重复n次进行估计
+
+- plug-in 原则 —— 样本对总体的估计逼近
+
+- Monte Carlo 模拟 —— 大数定律
+
+示例：普吉特海湾PCBs开放数据
+========================================================
+
+- EPA公布于Socrata.com
+
+- 75个底泥样品采样点数据与污染物浓度数据
+
+- 只关注PCBs总浓度与采样深度两个变量
+
+***
+
+![sample](figure/socrata.png)
+
+PCBs总浓度描述
+========================================================
+
+- 假定75为总体，从中随机抽取30个为样本，进行浓度描述
+
+- 中位数 or 均值
+
+- 点估计 or 区间估计
+
+- Bootstrap对中位数进行区间估计
+
+
+
+
+```
+## Warning: 'mbcsToSbcs'里转换'PCBs浓度描述'出错：<e6>代替了dot
+## Warning: 'mbcsToSbcs'里转换'PCBs浓度描述'出错：<b5>代替了dot
+## Warning: 'mbcsToSbcs'里转换'PCBs浓度描述'出错：<93>代替了dot
+## Warning: 'mbcsToSbcs'里转换'PCBs浓度描述'出错：<e5>代替了dot
+## Warning: 'mbcsToSbcs'里转换'PCBs浓度描述'出错：<ba>代替了dot
+## Warning: 'mbcsToSbcs'里转换'PCBs浓度描述'出错：<a6>代替了dot
+## Warning: 'mbcsToSbcs'里转换'PCBs浓度描述'出错：<e6>代替了dot
+## Warning: 'mbcsToSbcs'里转换'PCBs浓度描述'出错：<8f>代替了dot
+## Warning: 'mbcsToSbcs'里转换'PCBs浓度描述'出错：<8f>代替了dot
+## Warning: 'mbcsToSbcs'里转换'PCBs浓度描述'出错：<e8>代替了dot
+## Warning: 'mbcsToSbcs'里转换'PCBs浓度描述'出错：<bf>代替了dot
+## Warning: 'mbcsToSbcs'里转换'PCBs浓度描述'出错：<b0>代替了dot
+## Warning: 'mbcsToSbcs'里转换'PCBs总浓度'出错：<e6>代替了dot
+## Warning: 'mbcsToSbcs'里转换'PCBs总浓度'出错：<80>代替了dot
+## Warning: 'mbcsToSbcs'里转换'PCBs总浓度'出错：<bb>代替了dot
+## Warning: 'mbcsToSbcs'里转换'PCBs总浓度'出错：<e6>代替了dot
+## Warning: 'mbcsToSbcs'里转换'PCBs总浓度'出错：<b5>代替了dot
+## Warning: 'mbcsToSbcs'里转换'PCBs总浓度'出错：<93>代替了dot
+## Warning: 'mbcsToSbcs'里转换'PCBs总浓度'出错：<e5>代替了dot
+## Warning: 'mbcsToSbcs'里转换'PCBs总浓度'出错：<ba>代替了dot
+## Warning: 'mbcsToSbcs'里转换'PCBs总浓度'出错：<a6>代替了dot
+## Warning: 'mbcsToSbcs'里转换'概率密度'出错：<e6>代替了dot
+## Warning: 'mbcsToSbcs'里转换'概率密度'出错：<a6>代替了dot
+## Warning: 'mbcsToSbcs'里转换'概率密度'出错：<82>代替了dot
+## Warning: 'mbcsToSbcs'里转换'概率密度'出错：<e7>代替了dot
+## Warning: 'mbcsToSbcs'里转换'概率密度'出错：<8e>代替了dot
+## Warning: 'mbcsToSbcs'里转换'概率密度'出错：<87>代替了dot
+## Warning: 'mbcsToSbcs'里转换'概率密度'出错：<e5>代替了dot
+## Warning: 'mbcsToSbcs'里转换'概率密度'出错：<af>代替了dot
+## Warning: 'mbcsToSbcs'里转换'概率密度'出错：<86>代替了dot
+## Warning: 'mbcsToSbcs'里转换'概率密度'出错：<e5>代替了dot
+## Warning: 'mbcsToSbcs'里转换'概率密度'出错：<ba>代替了dot
+## Warning: 'mbcsToSbcs'里转换'概率密度'出错：<a6>代替了dot
+```
+
+![plot of chunk raw](figure/raw.png) 
+
+- bootstrap
+    
+bootstrap
+========================================================
+type: alart
+
+> *模型是现实的简化，不是产生现象的原因*
+
+> *主要规律不受异常值影响*
+
+> *非参区间估计*
+
+重采样演示
+========================================================
+
+
+
+<link rel="stylesheet" href="http://vis.supstat.com//assets/themes/dinky/css/scianimator.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script src="http://vis.supstat.com/assets/themes/dinky/js/jquery.scianimator.min.js"></script>
+
+<div class="scianimator">
+<div id="test" style="display: inline-block;">
+</div>
+</div>
+<script type="text/javascript">
+  (function($) {
+    $(document).ready(function() {
+      var imgs = Array(50);
+      for (i=0; ; i++) {
+        if (i == imgs.length) break;
+        imgs[i] = "figure/test" + (i + 1) + ".png";
+      }
+      $("#test").scianimator({
+          "images": imgs,
+          "delay": 100,
+          "controls": ["first", "previous", "play", "next", "last", "loop", "speed"],
+      });
+      $("#test").scianimator("play");
+    });
+  })(jQuery);
+</script>
+
+
+将样本看成总体 有放回的反复抽样
+========================================================
