@@ -10,7 +10,7 @@ rawdata <- read.csv('2008_BOLD_Survey_of_Puget_Sound_Levels_for_PCB_Congeners_Ra
 # 查看列名
 # colnames(rawdata)
 # 观察总浓度与深度关系
-plot(rawdata$Depth..feet.,rawdata$Total.PCBs..0.DL..pg.g)
+plot(rawdata$Depth..feet.,rawdata$Total.PCBs..0.DL..pg.g,xlab = 'PCBs总浓度(pg/g)', ylab = '采样点深度', main = '双变量关系探索')
 # bootstrap重采样
 Total.PCBs <- rawdata$Total.PCBs..0.DL..pg.g
 Depth <- rawdata$Depth..feet.
@@ -43,28 +43,28 @@ abline(v = cip, col = "red", lwd=2)
 abline(v = cic, col = "green",lwd=2)
 abline(v = cis, col = "blue",lwd=2)
 abline(v = mean(data$Total.PCBs), col = "black")
-abline(v = median(data$Total.PCBs), col = "yellow",,lwd=3)
+abline(v = median(data$Total.PCBs), col = "yellow",lwd=3)
 
 # 与深度关系
 
 fit <- lm(data$Total.PCBs~data$Depth)
-plot(data$Total.PCBs~data$Depth)
-lines(data$Depth,fit$fitted)
+plot(data$Total.PCBs~data$Depth,xlab = 'PCBs总浓度(pg/g)', ylab = '采样点深度(m)', main = '双变量关系探索')
+lines(data$Depth,fit$fitted,lwd=3)
 
 # p值0.001525 r^2 0.1294
 
 fit2 <- loess(data$Total.PCBs~data$Depth)
-plot(data$Total.PCBs~data$Depth)
-lines(lowess(data$Depth,fit2$fitted))
+plot(data$Total.PCBs~data$Depth,xlab = 'PCBs总浓度(pg/g)', ylab = '采样点深度(m)', main = '双变量关系探索')
+lines(lowess(data$Depth,fit2$fitted),lwd=3)
 
 # 局部加权回归散点平滑法
 
-plot(data$Total.PCBs~data$Depth, pch = 20, col = rgb(0, 0, 0, 0.5))
+plot(data$Total.PCBs~data$Depth, pch = 20, col = rgb(0, 0, 0, 0.5),xlab = 'PCBs总浓度(pg/g)', ylab = '采样点深度(m)', main = '双变量关系探索')
 for (i in 1:300){
     idx = sample(75, replace=TRUE)
     lines(lowess(data$Depth[idx], data$Total.PCBs[idx]), col = rgb(0,0, 0, 0.05), lwd = 1.5) 
 }
-lines(data$Depth,fit$fitted)
+lines(data$Depth,fit$fitted,lwd=3)
 ```
 
 ================================================
@@ -182,11 +182,12 @@ sub <- data[a,]
 d[i] <- mean(sub$Total.PCBs)
 e[i] <- median(sub$Total.PCBs)
 }
+cie <- quantile(e, probs = c(0.025, 0.975))
 
 cib <- quantile(b, probs = c(0.025, 0.975))
 cic <- quantile(c, probs = c(0.025, 0.975))
 cid <- quantile(d, probs = c(0.025, 0.975))
-cie <- quantile(e, probs = c(0.025, 0.975))
+
 
 cip <- quantile(data$Total.PCBs, probs = c(0.025, 0.975))
 cis <- quantile(subdatatest$Total.PCBs, probs = c(0.025, 0.975))
@@ -203,9 +204,11 @@ abline(v = cib, col = "blue",lwd=2)
 abline(v = t$conf.int, col = "black",lwd=2)
 abline(v = s$conf.int, col = "yellow",lwd=2)
 
+abline(v = cic, col = "blue", lwd=2)
 abline(v = cie, col = "red", lwd=2)
-abline(v = mean(data$Total.PCBs), col = "black")
+abline(v = mean(data$Total.PCBs), col = "black",lwd=2)
 abline(v = median(data$Total.PCBs), col = "yellow",lwd=3)
+abline(v = exp(mean(log(data$Total.PCBs))), col = "green",lwd=3)
 
 ```
 
