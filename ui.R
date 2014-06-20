@@ -19,7 +19,7 @@ shinyUI(pageWithSidebar(
     sliderInput("integer", 
                 label = "Bootstrap times:", 
                 min = 100, 
-                max = 2000, 
+                max = 1000, 
                 value = 500),
     actionButton("get", "GO"),
     br(),
@@ -56,7 +56,7 @@ This app used those data from U.S. EPA's website."),
       build a more specific model or find some thresholds in an intuitional 
       figure. In this app, the samples could be selected by latitude and 
       longitude range and user could explor the relationship between depth, TOC 
-      and TF. Also the bootstrap times could be selected from 100 to 2000.JUST 
+      and TF. Also the bootstrap times could be selected from 100 to 1000.JUST 
       click GO to begin you explore."),
     plotOutput("plot"),
     h5('Data were got from this webpages :'),a('http://www.epa.gov/pugetsound/bold.html')

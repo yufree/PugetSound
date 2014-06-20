@@ -12,7 +12,7 @@ shinyServer(function(input, output) {
                    "TOC" = df[,5],
                    "TF" = df[,6])
     pcbs <- df[,7]
-    plot(y=pcbs,x=args, pch = 20, col = rgb(0, 0, 0, 0.5),xlab = 'Total PCBs concertration (pg/g)', ylab = input$var, main = 'relationship explore')
+    plot(y=pcbs,x=args, pch = 20, col = rgb(0, 0, 0, 0.5),ylab = 'Total PCBs concertration (pg/g)', xlab = input$var, main = 'relationship explore')
     for (i in 1:input$integer){
       idx = sample(nrow(df), replace=TRUE)
       lines(lowess(y = pcbs[idx], x = args[idx]), col = rgb(0,0, 0, 0.05), lwd = 1.5) 
