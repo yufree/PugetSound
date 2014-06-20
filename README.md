@@ -1,4 +1,4 @@
 PugetSound
 ==========
 
-PCB data analysis
+PCBs data analysis
